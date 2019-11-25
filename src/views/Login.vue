@@ -1,11 +1,12 @@
 <template>
   <div class='login-back'>
     <el-form
-      class="login-form"
       :model="ruleForm"
+      status-icon
       :rules="rules"
       ref="ruleForm"
       label-width="70px"
+      class="login-form"
       label-position="left"
     >
       <div class="login-title">欢迎使用家庭信息簿</div>
@@ -14,8 +15,8 @@
         prop="username"
       >
         <el-input
-          placeholder='请输入用户名'
           v-model="ruleForm.username"
+          autocomplete="off"
         ></el-input>
       </el-form-item>
       <el-form-item
@@ -24,14 +25,14 @@
       >
         <el-input
           type="password"
-          placeholder='请输入密码'
           v-model="ruleForm.password"
+          autocomplete="off"
         ></el-input>
       </el-form-item>
       <el-form-item>
         <el-button
           type="primary"
-          @click="loginClick('ruleForm')"
+          @click="submitForm('ruleForm')"
         >登录</el-button>
       </el-form-item>
     </el-form>
@@ -45,13 +46,20 @@ export default {
     var validateUserName = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入用户名'))
+      } else {
+        if (this.ruleForm.password !== '') {
+          this.$refs.ruleForm.validateField('password')
+        }
+        callback()
       }
     }
     var validatePassword = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'))
       } else if (value.length < 8) {
-        callback(new Error('密码必须大于8位'))
+        callback(new Error('密码不能小于8位数!'))
+      } else {
+        callback()
       }
     }
     return {
@@ -66,20 +74,20 @@ export default {
         password: [
           { validator: validatePassword, trigger: 'blur' }
         ]
-
       }
     }
   },
   methods: {
-    loginClick (formName) {
-      this.$refs[formName].validate((valide) => {
-        if (valide) {
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) {
           this.$message({
             message: '登录成功',
             type: 'success'
           })
         } else {
-          this.$alert('登录错误')
+          this.$alert('请检查合法性')
+          return false
         }
       })
     }
