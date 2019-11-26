@@ -56,8 +56,8 @@ export default {
     var validatePassword = (rule, value, callback) => {
       if (value === '') {
         callback(new Error('请输入密码'))
-      } else if (value.length < 8) {
-        callback(new Error('密码不能小于8位数!'))
+      } else if (value.length < 5) {
+        callback(new Error('密码不能小于5位数!'))
       } else {
         callback()
       }
@@ -85,8 +85,12 @@ export default {
             message: '登录成功',
             type: 'success'
           })
+          this.$router.replace({ path: '/home' })
         } else {
-          this.$alert('请检查合法性')
+          this.$message({
+            message: '输入错误，请检查',
+            type: 'error'
+          })
           return false
         }
       })
